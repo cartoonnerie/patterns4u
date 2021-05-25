@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  front:
+    build: ./front
+    ports:
+      - 3000:3000
+    volumes:
+      - ./front:/front
+      - /front/node_modules/
+    environment: 
+      HOST: 0.0.0.0
+
+  server:
+    build: ./server
+    ports:
+      - 8080:8080
+    volumes:
+      - ./server:/server
+      - /server/node_modules/
+    environment:
+      - DATABASE_URL=mongo
+      - WAIT_HOSTS=mongo:27017
+    depends_on:
+      - database
+
+  database:
+   image: mongo
+   container_name: mongo
+   ports:
+     - 27017:27017
+   volumes:
+     - ./db:/data/db
