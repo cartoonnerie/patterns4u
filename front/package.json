@@ -16,6 +16,9 @@
   "devDependencies": {
     "@nuxt/types": "^2.15.3",
     "@nuxt/typescript-build": "^2.1.0",
-    "@nuxtjs/vuetify": "^1.11.3"
+    "@nuxtjs/stylelint-module": "^4.0.0",
+    "@nuxtjs/vuetify": "^1.11.3",
+    "stylelint": "^13.13.1",
+    "stylelint-config-recommended": "^5.0.0"
   }
 }
