@@ -1,0 +1,414 @@
+swagger: "2.0"
+info:
+  description: "ici mettre une description"
+  version: "2.0.0"
+  title: "Swagger Tricot"
+
+schemes:
+  - "https"
+paths:
+  /login: #TODO
+    get:
+      tags:
+        - "/login"
+      summary: "Starts the OAuth2 Ravelry Authentification process"
+      operationId: uploadFile
+      responses:
+        "302":
+          description: "Redirection to Ravelry OAuth2 page"
+        '404':
+          description: Not Found
+        '429':
+          description: Too Many Requests
+        default:
+          description: Default
+
+  /login/callback: #TODO
+    get:
+      tags:
+        - "/login"
+      summary: "Finishes the OAuth2 process"
+      responses:
+        "200":
+          description: "User is logged in"   
+        "4XX-5XX":
+          description: "Ravelry API errors"
+        '404':
+          description: Not Found
+        '429':
+          description: Too Many Requests
+        default:
+          description: Default
+
+  /logout: #TODO
+    post:
+      tags:
+        - "/logout"
+      summary: "Removes the user session"
+      responses:
+        "200":
+          description: "proper operation"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: Too Many Requests
+        default:
+          description: Default
+      security:
+        - oAuth_autorization: []
+
+  /api/users/:id_creator:
+    get:
+      tags:
+        - "/api/users"
+      summary: "get user with id=id_creator"
+      description: ""
+      operationId: "get_user"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters: []
+      responses:
+        "200":
+          description: "proper operation"
+          schema:
+            $ref: "#/definitions/Pattern"
+        "400":
+          description: "Bad request"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: Too Many Requests
+        default:
+          description: Default
+      security:
+        - oAuth_autorization: []
+
+  /api/patterns:
+    get: #TODO pagination
+      tags:
+        - "/api/patterns"
+      summary: "Get all patterns"
+      description: ""
+      operationId: ""
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "recovery made without problems"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Pattern"
+            maxItems: 100
+        "400":
+          description: "Bad Request"
+        '404':
+          description: Not Found
+        '415':
+          description: Unsupported Media Type
+        '429':
+          description: Too Many Requests
+        default:
+          description: Default
+    post:
+      tags:
+        -  "/api/patterns"
+      summary: "Create pattern"
+      description: ""
+      operationId: "create_pattern"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Pass the necessary information to the creation of a patterns"
+          schema:
+            $ref: "#/definitions/Pattern"
+      responses:
+        "201":
+          description: "creation ok"
+          schema: 
+            $ref: "#/definitions/Pattern"
+        "400":
+          description: "Invalid input"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '415':
+          description: Unsupported Media Type
+        '429':
+          description: Too Many Requests
+        default:
+          description: Default
+      security:
+        - oAuth_autorization: []
+
+  /api/patterns/:id_pattern: 
+    put:
+      tags:
+        -  "/api/patterns"
+      summary: "modification of a pattern  with id=id_pattern"
+      description: ""
+      operationId: ""
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Pass the necessary information to the modification of a patterns"
+          required: true
+          schema:
+            $ref: "#/definitions/Pattern"
+      responses:
+        "200":
+          description: "modification ok"
+          schema:
+            $ref: '#/definitions/Pattern'
+        "400":
+          description: "Invalid input"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '415':
+          description: Unsupported Media Type
+        '429':
+          description: Too Many Requests
+        default:
+          description: Default
+      security:
+        - oAuth_autorization: []
+    get: #do public version
+      tags:
+        - "/api/patterns"
+      summary: "get pattern with id=id_pattern"
+      description: ""
+      operationId: "get_pattern"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "recovery ok"
+          schema:
+            $ref: "#/definitions/Pattern"
+        "400":
+          description: "invalid id"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: Too Many Requests
+        default:
+          description: Default
+      security:
+        - oAuth_autorization: []
+    delete:
+      tags:
+        - "/api/patterns"
+      summary: "delete pattern with id=id_pattern"
+      description: ""
+      operationId: "delete_pattern"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "delete ok"
+        "400":
+          description: "invalid id or you aren't a owner of this pattern"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: Too Many Requests
+        default:
+          description: Default
+      security:
+        - oAuth_autorization: []
+
+  /api/patterns/pdf/:id_pattern/:
+    get: #do multisize
+      tags:
+        - "/api/patterns"
+      summary: "get pattern with id=id_pattern and with only one size"
+      parameters:
+        - in: query
+          name: size
+          required: true
+          type: integer
+          description: "desired size"
+          maximum: 1024
+          minimum: 0
+          format: int32
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "recovery ok"
+          schema:
+            $ref: "#/definitions/Pattern"
+        "400":
+          description: "invalid input"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '429':
+          description: Too Many Requests
+        default:
+          description: Default
+      security:
+        - oAuth_autorization: []
+
+
+securityDefinitions:
+  oAuth_autorization:
+    in: header
+    type: apiKey
+    name: api_key
+
+definitions:
+  # TODO User (small, public)
+  # TODO Pattern (small, public)
+  User:
+    type: "object"
+    properties:
+      username:
+        type: "string"
+        pattern: '^example-[0-9a-z]+$'
+        maxLength: 32
+      password:
+        type: "string"
+        pattern: '^example-[0-9a-z]+$'
+        maxLength: 32
+      patterns:
+        type: "array"
+        items:
+          $ref: "#/definitions/Pattern"
+        maxItems: 100
+    xml:
+      name: "User"
+  Pattern:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        pattern: '^example-[0-9a-z]+$'
+        maxLength: 32
+      creator:
+        type: "string"
+        pattern: '^example-[0-9a-z]+$'
+        maxLength: 32
+      thumbnail:
+        type: "string"
+        pattern: '^example-[0-9a-z]+$'
+        maxLength: 32
+      description:
+        type: "object"
+        properties:
+          placeholders:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                balise_id:
+                  type: "string"
+                  pattern: '^example-[0-9a-z]+$'
+                  maxLength: 32
+                values:
+                  type: "object"
+                  properties:
+                    key(size_name):
+                      type: "string"
+                      pattern: '^example-[0-9a-z]+$'
+                      maxLength: 32
+                    value:
+                      type: "string"
+                      pattern: '^example-[0-9a-z]+$'
+                      maxLength: 32
+            maxItems: 100
+          content:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                type:
+                  type: "string"
+                  enum:
+                    - paragraph
+                data:
+                  type: "object"
+
+      sizes:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            size_name:
+              type: "string"
+              pattern: '^example-[0-9a-z]+$'
+              maxLength: 32
+            dimensions:
+              type: "array"
+              items:
+                type: "object"
+                properties:
+                  name:
+                    type: "string"
+                  value:
+                    type: "integer"
+                    maximum: 1024
+                    minimum: 0
+                    format: int32
+      gauge:
+        type: "integer"
+        maximum: 1024
+        minimum: 0
+        format: int32
+      equipment:
+        type: "array"
+        items:
+          format: "string"
+          type: string
+        maxItems: 100
+      ravelry_id:
+        type: "string"
+        pattern: '^example-[0-9a-z]+$'
+        maxLength: 32
+      published:
+        type: "boolean"
+    xml:
+      name: "Patterns"
+      security:
+        - oAuth_autorization: []
+      
