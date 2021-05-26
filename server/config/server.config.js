@@ -1,11 +1,11 @@
-const secret = require('./secret.config');
+import { SESSION } from './secret.config'
 
-const serverConfig = {};
+const serverConfig = {}
 
-serverConfig.db_name = 'knitting-website';
-serverConfig.api_port = 8080;
-serverConfig.server_url = 'https://localhost:' + serverConfig.api_port;
-serverConfig.client_url = 'http://localhost:8080';
-serverConfig.session_secret = secret.SESSION;
+serverConfig.db_name = 'knitting-website'
+serverConfig.api_port = 8080
+serverConfig.server_url = 'https://localhost:' + serverConfig.api_port
+serverConfig.client_url = 'http://localhost:8080'
+serverConfig.session_secret = SESSION
 
-module.exports = serverConfig;
+export default serverConfig
