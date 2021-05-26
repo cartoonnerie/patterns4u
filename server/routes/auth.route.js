@@ -63,7 +63,8 @@ router.get('/login/callback', async (req, res) => {
     res.cookie('username', currentUser.username)
     res.cookie('userId', currentUser.id)
     res.redirect(serverConfig.client_url)
-  } catch (error) {
+  }
+  catch (error) {
     console.error(error)
   }
 })

@@ -8,9 +8,9 @@ import mongoose from 'mongoose'
 
 import serverConfig from './config/server.config'
 
-import authRoutes from './routes/auth'
-import userRoutes from './routes/user'
-import patternRoutes from './routes/pattern'
+import authRoutes from './routes/auth.route'
+import userRoutes from './routes/users.route'
+import patternRoutes from './routes/patterns.route'
 
 // import functPDF from './patternPDF/convert/data.pdf'
 // functPDF.createPatternPDF();
