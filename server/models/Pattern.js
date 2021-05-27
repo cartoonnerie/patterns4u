@@ -5,10 +5,7 @@ const Schema = mongoose.Schema
 
 const PatternSchema = new Schema({
   ravelry_id: String,
-  name: {
-    type: String,
-    required: true
-  },
+  name: { type: String, required: true },
   creator: {
     type: String,
     required: true,
@@ -20,10 +17,7 @@ const PatternSchema = new Schema({
     }
   },
   gauge: Number,
-  isDraft: {
-    type: Boolean,
-    default: true
-  },
+  isDraft: { type: Boolean, default: true },
   description: {
     _id: false,
     placeholders: [{
@@ -47,15 +41,18 @@ const PatternSchema = new Schema({
       }
     }]
   },
-  sizes: [{
-    name: String,
-    dimensions: [{
-      _id: false,
-      name: String,
-      value: Number
-    }]
-  }],
-  thumbnail: String
+  sizes: {
+    type: [{
+      name: { type: String, default: '' },
+      dimensions: [{
+        _id: false,
+        name: { type: String, default: '' },
+        value: { type: Number }
+      }]
+    }],
+    default: () => []
+  },
+  thumbnail: { type: String }
 })
 
 const Pattern = mongoose.model('Pattern', PatternSchema)
