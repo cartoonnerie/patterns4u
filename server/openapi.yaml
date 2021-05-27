@@ -409,6 +409,4 @@ definitions:
         type: "boolean"
     xml:
       name: "Patterns"
-      security:
-        - oAuth_autorization: []
       
