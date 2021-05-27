@@ -1,5 +1,7 @@
-import { Schema, Mixed, model } from 'mongoose'
-import User from './User'
+import mongoose from 'mongoose'
+import User from './User.js'
+
+const Schema = mongoose.Schema
 
 const PatternSchema = new Schema({
   ravelry_id: String,
@@ -40,7 +42,7 @@ const PatternSchema = new Schema({
       },
       data: {
         _id: false,
-        type: Mixed,
+        type: mongoose.Mixed,
         required: true
       }
     }]
@@ -56,5 +58,5 @@ const PatternSchema = new Schema({
   thumbnail: String
 })
 
-const Pattern = model('Pattern', PatternSchema)
+const Pattern = mongoose.model('Pattern', PatternSchema)
 export default Pattern

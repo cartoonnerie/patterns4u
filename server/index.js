@@ -6,11 +6,11 @@ import cors from 'cors'
 import session from 'express-session'
 import mongoose from 'mongoose'
 
-import serverConfig from './config/server.config'
+import serverConfig from './config/server.config.js'
 
-import authRoutes from './routes/auth.route'
-import userRoutes from './routes/users.route'
-import patternRoutes from './routes/patterns.route'
+// import authRoutes from './routes/auth.route.js'
+import userRoutes from './routes/users.route.js'
+import patternRoutes from './routes/patterns.route.js'
 
 // import functPDF from './patternPDF/convert/data.pdf'
 // functPDF.createPatternPDF();
@@ -33,7 +33,7 @@ db.once('open', function () {
     saveUninitialized: false
   }))
 
-  app.use('/', authRoutes)
+  // app.use('/', authRoutes)
   app.use('/api/users', userRoutes)
   app.use('/api/patterns', patternRoutes)
 

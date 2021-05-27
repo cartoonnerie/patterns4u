@@ -2,11 +2,11 @@ import Router from 'express-promise-router'
 import { AuthorizationCode } from 'simple-oauth2'
 import { generate as generateRandomString } from 'randomstring'
 
-import serverConfig from '../config/server.config'
-import authConfig from '../config/auth.config'
-import routeProtection from '../controller/routeProtection.controller'
+import serverConfig from '../config/server.config.js'
+import authConfig from '../config/auth.config.js'
+import routeProtection from '../controller/routeProtection.controller.js'
 
-import User from '../models/User'
+import User from '../models/User.js'
 
 const router = Router()
 

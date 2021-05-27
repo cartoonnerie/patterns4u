@@ -1,5 +1,5 @@
-import { CLIENT } from './secret.config'
-import serverConfig from './server.config'
+import { CLIENT } from './secret.config.js'
+import serverConfig from './server.config.js'
 
 const authConfig = {}
 

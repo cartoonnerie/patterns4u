@@ -1,6 +1,6 @@
 import Router from 'express-promise-router'
 import * as controller from '../controller/patterns.controller.js'
-// import routeProtection from '../controller/routeProtection.controller'
+// import routeProtection from '../controller/routeProtection.controller.js'
 
 const router = Router()
 

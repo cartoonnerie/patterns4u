@@ -15,6 +15,8 @@ module.exports = {
   ],
   rules: {
 
+    'brace-style': ['error', 'stroustrup', { allowSingleLine: true }],
+
     /**********************/
     /* General Code Rules */
     /**********************/

@@ -1,4 +1,4 @@
-import { SESSION } from './secret.config'
+import { SESSION } from './secret.config.js'
 
 const serverConfig = {}
 
