@@ -4,6 +4,6 @@ import * as controller from '../controller/users.controller.js'
 const router = Router()
 
 router.get('/:id', controller.getUserById)
-router.get('/patterns/:id', controller.getUserPatterns)
+router.get('/:id/patterns', controller.getUserPatterns)
 
 export default router
