@@ -1,53 +1,43 @@
 import https from 'https'
 import fs from 'fs'
-import express from 'express'
-import bodyParser from 'body-parser'
-import cors from 'cors'
-import session from 'express-session'
-import mongoose from 'mongoose'
-
+import debug from 'debug'
+import { config } from 'dotenv'
 import serverConfig from './config/server.config.js'
 
-// import authRoutes from './routes/auth.route.js'
-import userRoutes from './routes/users.route.js'
-import patternRoutes from './routes/patterns.route.js'
+import app from './app.js'
+import './db/mongoose.js'
 
-// import functPDF from './patternPDF/convert/data.pdf'
-// functPDF.createPatternPDF();
+config()
 
-const DATABASE_URL = process.env.DATABASE_URL || 'localhost:27017'
-mongoose.connect(`mongodb://${DATABASE_URL}/${serverConfig.db_name}`,
-  { useNewUrlParser: true, useUnifiedTopology: true })
-const db = mongoose.connection
+// TODO understand why debugger prints nothing
+const PORT = process.env.PORT || serverConfig.api_port || 5000
 
-db.on('error', console.error.bind(console, 'connection error:'))
-db.once('open', function () {
-  console.log('Database connected')
+https.globalAgent.options.rejectUnauthorized = false
+const key = fs.readFileSync('./security/localhostCertKey.pem')
+const cert = fs.readFileSync('./security/localhostCert.pem')
+const opts = {
+  key,
+  cert
+}
 
-  const app = express()
-  app.use(bodyParser.json())
-  app.use(cors({ origin: [serverConfig.client_url] }))
-  app.use(session({
-    secret: serverConfig.session_secret,
-    resave: false,
-    saveUninitialized: false
-  }))
+const server = https.createServer(opts, app)
 
-  // app.use('/', authRoutes)
-  app.use('/api/users', userRoutes)
-  app.use('/api/patterns', patternRoutes)
+process.on('uncaughtException', (error) => {
+  DEBUG(`uncaught exception: ${error.message}`)
+  process.exit(1)
+})
 
-  https.globalAgent.options.rejectUnauthorized = false
-  const key = fs.readFileSync('./security/localhostCertKey.pem')
-  const cert = fs.readFileSync('./security/localhostCert.pem')
-  const opts = {
-    key,
-    cert
-  }
-
-  const port = serverConfig.api_port
-  const server = https.createServer(opts, app)
-  server.listen(port, () => {
-    console.log(`server listening on ${port}`)
+process.on('unhandledRejection', (err) => {
+  DEBUG(err)
+  DEBUG('Unhandled Rejection:', {
+    name: err.name,
+    message: err.message || err
   })
+  process.exit(1)
+})
+
+server.listen(PORT, () => {
+  DEBUG(
+    `server running on http://localhost:${PORT} in ${process.env.NODE_ENV} mode`
+  )
 })
