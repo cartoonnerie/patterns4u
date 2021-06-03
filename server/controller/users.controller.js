@@ -1,4 +1,4 @@
-import User from '../models/User.js'
+import User from '../models/Users.js'
 import Pattern from '../models/Pattern.js'
 
 export async function getUserPatterns (req, res) {
