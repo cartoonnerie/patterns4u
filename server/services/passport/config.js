@@ -5,7 +5,7 @@ import { config } from 'dotenv'
 import authConfig from '../../config/auth.config.js'
 import RavelryStrategy from './strategy.js'
 
-// const DEBUG = console.log // debug('dev')
+// const DEBUG = debug('dev')
 config()
 
 const oauthStrategy = new RavelryStrategy({

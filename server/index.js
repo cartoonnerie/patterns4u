@@ -8,6 +8,7 @@ import app from './app.js'
 import './db/mongoose.js'
 
 config()
+const DEBUG = debug('dev')
 
 // TODO understand why debugger prints nothing
 const PORT = process.env.PORT || serverConfig.api_port || 5000

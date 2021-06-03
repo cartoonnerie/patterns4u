@@ -21,6 +21,10 @@ services:
     environment:
       - DATABASE_URL=mongo
       - WAIT_HOSTS=mongo:27017
+      - PORT=8080
+      - DEBUG=dev
+      - NODE_ENV=development
+      - DB_NAME=dev
     depends_on:
       - database
 

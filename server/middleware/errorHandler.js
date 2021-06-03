@@ -1,7 +1,9 @@
 import { config } from 'dotenv'
 import debug from 'debug'
+
 config()
 const DEBUG = debug('dev')
+
 export default (err, request, response, next) => {
   const isProduction = process.env.NODE_ENV === 'production'
   let errorMessage = {}
