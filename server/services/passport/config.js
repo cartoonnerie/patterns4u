@@ -1,11 +1,12 @@
-// import debug from 'debug'
+import debug from 'debug'
 import passport from 'passport'
 import { config } from 'dotenv'
 
 import authConfig from '../../config/auth.config.js'
+import Users from '../../models/Users.js'
 import RavelryStrategy from './strategy.js'
 
-// const DEBUG = debug('dev')
+const DEBUG = debug('dev')
 config()
 
 const oauthStrategy = new RavelryStrategy({
@@ -14,11 +15,13 @@ const oauthStrategy = new RavelryStrategy({
   callbackURL: 'https://localhost:8080/auth/ravelry/callback',
   state: 'dksjhkjsdhfksejdfhkjdshfksjdfkhsj'
 },
-function (accessToken, refreshToken, profile, done) {
-  done()
-  // User.findOrCreate(..., function(err, user) {
-  //   done(err, user);
-  // });
+async function (accessToken, refreshToken, profile, done) {
+  const { id, username } = profile
+  let user = await Users.findOne({ ravelryId: id })
+  if (user) { DEBUG(user); return done(null, user) }
+  user = await Users.create({ ravelryId: id, username })
+  DEBUG(`new User ${user}`)
+  return done(null, user)
 })
 passport.use('ravelry', oauthStrategy)
 
