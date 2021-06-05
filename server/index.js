@@ -2,7 +2,7 @@ import https from 'https'
 import fs from 'fs'
 import debug from 'debug'
 import { config } from 'dotenv'
-import serverConfig from './config/server.config.js'
+import { apiPort } from './config/server.config.js'
 
 import app from './app.js'
 import './db/mongoose.js'
@@ -10,8 +10,7 @@ import './db/mongoose.js'
 config()
 const DEBUG = debug('dev')
 
-// TODO understand why debugger prints nothing
-const PORT = process.env.PORT || serverConfig.api_port || 5000
+const PORT = process.env.PORT || apiPort || 5000
 
 https.globalAgent.options.rejectUnauthorized = false
 const key = fs.readFileSync('./security/localhostCertKey.pem')

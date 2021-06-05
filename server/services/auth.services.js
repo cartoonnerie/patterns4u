@@ -1,6 +1,8 @@
 import jwt from 'express-jwt'
 import debug from 'debug'
 import passport from '../services/passport/config.js'
+import { serverSecret } from '../config/server.config.js'
+
 const DEBUG = debug('dev')
 
 const getTokenFromHeaders = (req) => {
@@ -14,13 +16,13 @@ const getTokenFromHeaders = (req) => {
 
 export const auth = {
   required: jwt({
-    secret: 'secret',
+    secret: serverSecret,
     userProperty: 'payload',
     getToken: getTokenFromHeaders,
     algorithms: ['HS256']
   }),
   optional: jwt({
-    secret: 'secret',
+    secret: serverSecret,
     userProperty: 'payload',
     getToken: getTokenFromHeaders,
     credentialsRequired: false,

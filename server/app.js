@@ -7,7 +7,7 @@ import { config } from 'dotenv'
 import passport from 'passport'
 import errorHandler from './middleware/errorHandler.js'
 
-import serverConfig from './config/server.config.js'
+import { clientUrl } from './config/server.config.js'
 
 import authRoutes from './routes/auth.route.js'
 import userRoutes from './routes/users.route.js'
@@ -21,7 +21,7 @@ if (['development', 'production'].includes(process.env.NODE_ENV)) {
   app.use(logger('dev'))
 }
 
-app.use(cors({ origin: [serverConfig.client_url] }))
+app.use(cors({ origin: [clientUrl] }))
 app.use(session({
   secret: serverConfig.session_secret,
   resave: false,
