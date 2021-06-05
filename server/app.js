@@ -1,6 +1,5 @@
 import express from 'express'
 import cors from 'cors'
-import session from 'express-session'
 
 import logger from 'morgan'
 import { config } from 'dotenv'
@@ -22,11 +21,6 @@ if (['development', 'production'].includes(process.env.NODE_ENV)) {
 }
 
 app.use(cors({ origin: [clientUrl] }))
-app.use(session({
-  secret: serverConfig.session_secret,
-  resave: false,
-  saveUninitialized: false
-}))
 app.use(express.json())
 app.use(errorHandler)
 
