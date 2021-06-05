@@ -32,18 +32,9 @@ export const auth = {
 
 export function callbackSendToken (req, res, next) {
   function genToken (err, user, info) {
-    DEBUG('ici')
-    const userWithToken = user
-    DEBUG('here')
-    if (err) {
-      return next(err)
-    }
-    DEBUG('not error')
-    if (user) {
-      userWithToken.token = user.generateJWT()
-      DEBUG(userWithToken.token)
-      return res.json({ user: userWithToken.toAuthJSON() })
-    }
+    DEBUG(info)
+    if (err) { return next(err) }
+    if (user) { return res.json({ ...user.toAuthJSON(), ...info }) }
 
     return res.status(400).info // TODO understand
   }

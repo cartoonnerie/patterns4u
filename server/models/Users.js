@@ -30,8 +30,9 @@ UserSchema.methods.generateJWT = function () {
 }
 
 UserSchema.methods.toAuthJSON = function () {
+  const object = this.toObject({ versionKey: false })
   return {
-    _id: this._id,
+    ...object,
     token: this.generateJWT()
   }
 }

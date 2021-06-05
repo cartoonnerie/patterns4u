@@ -18,10 +18,14 @@ const oauthStrategy = new RavelryStrategy({
 async function (accessToken, refreshToken, profile, done) {
   const { id, username } = profile
   let user = await Users.findOne({ ravelryId: id })
-  if (user) { DEBUG(user); return done(null, user) }
+  if (user) {
+    DEBUG(user)
+    return done(null, user, { accessToken, refreshToken })
+  }
   user = await Users.create({ ravelryId: id, username })
   DEBUG(`new User ${user}`)
-  return done(null, user)
+  DEBUG({ user, accessToken, refreshToken })
+  return done(null, user, { accessToken, refreshToken })
 })
 passport.use('ravelry', oauthStrategy)
 

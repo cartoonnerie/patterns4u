@@ -2,6 +2,9 @@
 import Strategy from 'passport-strategy'
 import axios from 'axios'
 import { AuthorizationCode } from 'simple-oauth2'
+import debug from 'debug'
+
+const DEBUG = debug('dev')
 
 /**
  *
@@ -23,6 +26,7 @@ export default class RavelryStrategy extends Strategy {
     this._profileURL = 'https://api.ravelry.com/current_user.json'
     if (!options.clientID) { throw new TypeError('RavelryStrategy needs a clientID') }
     this._client_id = options.clientID
+    this._state = options.state
 
     if (!verify) { throw new TypeError('RavelryStrategy requires a verify callback') }
 
@@ -82,7 +86,7 @@ export default class RavelryStrategy extends Strategy {
 
         info = info || {}
         if (state) { info.state = state }
-        this.success(user, info)
+        return this.success(user, info)
       }
 
       const tokenParams = {
@@ -98,8 +102,9 @@ export default class RavelryStrategy extends Strategy {
     }
     // if we don't have an authentification code already
     else {
-      // TODO manage state
-      const params = { state: 'zzdzoiauozdslknsdqdlskd' }
+      // TODO manage state : c'est le front qui gère
+      const params = { state: req.query.state || this._state }
+      DEBUG(req.query)
       if (callbackURL) { params.redirect_uri = callbackURL }
       params.scope = this._scope
       this.redirect(this._oauth2.authorizeURL(params))
