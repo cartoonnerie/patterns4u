@@ -1,31 +1,49 @@
-import User from '../models/Users.js'
-import Pattern from '../models/Pattern.js'
+import debug from 'debug'
+import * as services from '../services/users.services.js'
+const DEBUG = debug('dev')
 
-export async function getUserPatterns (req, res) {
+async function userById (id, res) {
+  if (!id) { res.sendStatus(400) }
   try {
-    const user = await User.findById(req.params.id)
-    if (user) {
-      const patterns = await Pattern.find({ creator: req.params.id })
-      res.status(200).send(patterns)
-    }
-    else { res.status(404).send() }
+    const user = await services.getUserById(id)
+    if (!user) { res.sendStatus(404) }
+    res.status(200).send(user)
   }
   catch (error) {
-    console.warn(error)
+    DEBUG(error)
+    res.sendStatus(500)
+  }
+}
+
+async function userPatternsByUserId (id, res) {
+  // TODO catch appropriate error for user not found
+  if (!id) { res.sendStatus(400) }
+  try {
+    const patterns = await services.getPatternsByUserId(id)
+    res.status(200).send(patterns)
+  }
+  catch (error) {
+    DEBUG(error)
     res.status(500).send()
   }
 }
 
 export async function getUserById (req, res) {
-  try {
-    const { id } = req.params
-    const result = await User.findById(id)
-      .catch(() => { res.status(400).send() })
-    if (!result) { res.status(404).send() }
-    else { res.status(200).send(result) }
-  }
-  catch (error) {
-    console.warn(error)
-    res.send(500)
-  }
+  const { id } = req.params
+  await userById(id)
+}
+
+export async function getUserPatterns (req, res) {
+  const { id } = req.params
+  await userPatternsByUserId(id)
+}
+
+export async function getMyUser (req, res) {
+  const { id } = req.auth
+  await userById(id)
+}
+
+export async function getMyPatterns (req, res) {
+  const { id } = req.auth
+  await userPatternsByUserId(id)
 }
