@@ -36,5 +36,6 @@ UserSchema.methods.toAuthJSON = function () {
     token: this.generateJWT()
   }
 }
+
 const Users = mongoose.model('Users', UserSchema)
 export default Users

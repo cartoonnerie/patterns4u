@@ -1,35 +1,23 @@
 import debug from 'debug'
 import User from '../models/Users.js'
 import Pattern from '../models/Pattern.js'
+import { NotFoundError } from '../helpers/errors.js'
 const DEBUG = debug('dev')
 
-// TODO envoyer les bonnes erreurs
+const filters = {
+  public: null,
+  private: { versionKey: false }
+}
 
-export async function getUserById (id) {
-  // TODO seulement bons attrinuts de User
-  // TODO possibilité de généraliser le fait de n eprendre que certains attributs du modèle mongoose
-  try {
-    const result = await User.findById(id)
-    if (!result) { return null }
-    else { return result }
-  }
-  catch (error) {
-    DEBUG(error)
-    throw Error('generic error')
-  }
+export async function getUserById (id, filterType = 'public') {
+  const result = await User.findById(id, filters[filterType])
+  if (!result) { throw NotFoundError('user not found') }
+  return result
 }
 
 export async function getPatternsByUserId (id) {
-  try {
-    const user = await User.findById(id)
-    if (user) {
-      const patterns = await Pattern.find({ creator: id })
-      return patterns
-    }
-    else { throw Error('user not found') }
-  }
-  catch (error) {
-    DEBUG(error)
-    throw Error('generic error')
-  }
+  const user = await User.findById(id)
+  if (!user) { throw NotFoundError('user not found') }
+  const patterns = await Pattern.find({ creator: id })
+  return patterns
 }
