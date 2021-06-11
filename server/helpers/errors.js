@@ -12,3 +12,15 @@ export class NotFoundError extends ApplicationError {
     super(404, message || 'resource not found')
   }
 }
+
+export class NotYourPatternError extends ApplicationError {
+  constructor (message) {
+    super(403, message || 'this pattern is not yours')
+  }
+}
+
+export class BuyThatPatternError extends ApplicationError {
+  constructor (message) {
+    super(403, message || 'the user did not buy this pattern')
+  }
+}

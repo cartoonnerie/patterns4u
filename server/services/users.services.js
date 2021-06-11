@@ -9,13 +9,18 @@ const filters = {
 
 export async function getUserById (id, filterType = 'public') {
   const result = await User.findById(id, filters[filterType])
-  if (!result) { throw NotFoundError('user not found') }
+  if (!result) { throw new NotFoundError('user not found') }
   return result
 }
 
 export async function getPatternsByUserId (id) {
   const user = await User.findById(id)
-  if (!user) { throw NotFoundError('user not found') }
+  if (!user) { throw new NotFoundError('user not found') }
   const patterns = await Pattern.find({ creator: id })
   return patterns
+}
+
+export function boughtThatPattern (userId, patternId) {
+  // TODO
+  return false
 }

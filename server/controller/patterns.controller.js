@@ -1,87 +1,77 @@
+import debug from 'debug'
 import Pattern from '../models/Pattern.js'
+import * as services from '../services/patterns.services.js'
+const DEBUG = debug('dev')
 // import extraction from './extractionOfInformation/extractionData.js'
 
-export async function createPattern (req, res) {
-  try {
-    const newPattern = new Pattern({ ...req.body })
-    await newPattern.save()
-    res.send(newPattern)
-  }
-  catch (error) {
-    console.log(error)
-    res.send({ error })
-  }
-}
-
 export async function getAllPatterns (req, res) {
-  try {
-    const patterns = await Pattern.find({})
-    res.send(patterns)
-  }
-  catch (error) {
-    console.warn(error)
-    res.status(500)
-    res.send({ error })
-  }
+  const patterns = await Pattern.find({})
+  res.status(200).send(patterns)
 }
 
-export async function getPattern (req, res) {
-  try {
-    const pattern = await Pattern.findById(req.params.id)
-    if (pattern === null) { res.status(404).send() }
-    else { res.status(200).send(pattern) }
-  }
-  catch (error) { res.status(500).send({ error }) }
+export async function createPattern (req, res) {
+  const pattern = { ...req.body, creator: req.auth.id }
+  const newPattern = new Pattern(pattern)
+  await newPattern.save()
+  res.status(201).send(newPattern)
+}
+
+export async function getBoughtPatterns (req, res) {
+
+}
+
+export async function getPatternById (req, res) {
+  const pattern = await Pattern.findById(req.params.id)
+  services.checkBought(
+    req.params.id, req.auth.id,
+    () => {
+      res.status(200).send(pattern.getPrivate())
+    },
+    () => {
+      res.status(200).send(pattern.getPublic())
+    })
 }
 
 export async function deletePatterns (req, res) {
-  try {
-    const pattern = await Pattern.findByIdAndDelete(req.params.id)
-    if (pattern === null) { res.status(404).send() }
-    else { res.status(200).send(pattern) }
+  async function onSuccess () {
+    const pattern = await Pattern.deleteOne(req.params.id)
+    res.status(200).send(pattern)
   }
-  catch (error) {
-    console.warn(error)
-    res.status(500).send({ error })
-  }
+  return await services.checkOwnerAndAct(req.params.id, req.auth.id, onSuccess)
 }
 
 export async function updatePattern (req, res) {
-  try {
+  async function onSuccess () {
     const pattern = await Pattern.findByIdAndUpdate(req.params.id, req.body)
-    if (pattern === null) { res.status(404).send() }
     res.status(200).send(pattern)
   }
-  catch (error) {
-    console.warn(error)
-    res.status(500).send(error)
-  }
+  return await services.checkOwnerAndAct(req.params.id, req.auth.id, onSuccess)
 }
 
 export async function getPatternPDF (req, res) {
-  try {
-    // TODO handle errors more precisely
-    const pattern = await Pattern.findById(req.params.id)
-    if (pattern === null) { res.status(404).send() }
-    // eslint-disable-next-line no-unused-vars
-    const { size } = req.query
-    const data = '' // extraction.findDataBySize(pattern, size)
+  // TODO handle errors more precisely
+  // eslint-disable-next-line no-unused-vars
+  const pattern = await services.getPatternById(req.params.id)
 
-    // send data
-    const buffers = []
-    data.on('data', (chunk) => {
-      console.log('Chuck DATA', chunk)
-      buffers.push(chunk)
-    })
-    data.on('end', () => {
-      const filePdf = Buffer.concat(buffers)
-      res.set('Content-Type', 'application/pdf')
-        .status(200)
-        .send(filePdf)
-    })
-  }
-  catch (error) {
-    console.warn(error)
-    res.status(500).send(error)
-  }
+  services.checkBought(
+    req.params.id, req.auth.id,
+    () => {
+      // eslint-disable-next-line no-unused-vars
+      const { size } = req.query
+      const data = '' // extraction.findDataBySize(pattern, size)
+
+      // send data
+      const buffers = []
+      data.on('data', (chunk) => {
+        DEBUG('Chuck DATA', chunk)
+        buffers.push(chunk)
+      })
+      data.on('end', () => {
+        const filePdf = Buffer.concat(buffers)
+        res.set('Content-Type', 'application/pdf')
+          .status(200)
+          .send(filePdf)
+      })
+    }
+  )
 }
