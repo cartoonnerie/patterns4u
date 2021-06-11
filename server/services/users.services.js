@@ -1,8 +1,6 @@
-import debug from 'debug'
 import User from '../models/Users.js'
 import Pattern from '../models/Pattern.js'
 import { NotFoundError } from '../helpers/errors.js'
-const DEBUG = debug('dev')
 
 const filters = {
   public: null,
