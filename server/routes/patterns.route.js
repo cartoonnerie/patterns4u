@@ -1,17 +1,18 @@
 import Router from 'express-promise-router'
 import * as controller from '../controller/patterns.controller.js'
-// import routeProtection from '../controller/routeProtection.controller.js'
+import { auth } from '../services/auth.services.js'
 
 const router = Router()
 
-router.get('/:id', controller.getPattern)
-router.get('/', controller.getAllPatterns)
-router.get('/pdf/:id/:size?', controller.getPatternPDF)
+router.get('/', auth.optional, controller.getAllPatterns)
+router.post('/', auth.required, controller.createPattern)
 
-router.post('/', /* routeProtection.requireAuth, */ controller.createPattern)
+router.get('/', auth.required /* TODO conceive controller for that */)
 
-router.delete('/:id', /* routeProtection.requireAuth, */ controller.deletePatterns)
+router.get('/:id', auth.optional, controller.getPatternById)
+router.delete('/:id', auth.required, controller.deletePatterns)
+router.put('/:id', auth.required, controller.updatePattern)
 
-router.put('/:id', /* routeProtection.requireAuth, */ controller.updatePattern)
+router.get('/pdf/:id/:size?', auth.required, controller.getPatternPDF)
 
 export default router
