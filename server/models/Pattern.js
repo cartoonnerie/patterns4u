@@ -3,22 +3,31 @@ import User from './Users.js'
 
 const Schema = mongoose.Schema
 
+const availabilities = ['draft', 'online', 'free']
+
+const filters = {
+  public: { versionKey: false },
+  private: { explanation: false, versionKey: false }
+}
+
 const PatternSchema = new Schema({
   ravelry_id: String,
   name: { type: String, required: true },
   creator: {
-    type: String,
+    type: Schema.Types.ObjectId,
     required: true,
     validate: {
       validator (id) {
-        return User.findById(id, (_, record) => record != null)
+        return User.findById(id, null, null, (_, record) => record != null)
       },
       message: 'No user with provided id was found'
-    }
+    },
+    ref: 'User'
   },
   gauge: Number,
-  isDraft: { type: Boolean, default: true },
-  description: {
+  availability: { type: Object, enum: availabilities, default: 'draft' },
+  explanation: {
+    // TODO rethink with tiptap compatibility
     _id: false,
     placeholders: [{
       values: {
@@ -26,12 +35,11 @@ const PatternSchema = new Schema({
         of: Number
       }
     }],
-    content: [{
+    text: [{
       _id: false,
       required: false,
       type: {
         type: String,
-        enum: ['paragraph'],
         required: true
       },
       data: {
@@ -52,8 +60,20 @@ const PatternSchema = new Schema({
     }],
     default: () => []
   },
-  thumbnail: { type: String }
+  thumbnailUrl: { type: String }
 })
 
+PatternSchema.pre('findByIdAndUpdate', function (next) {
+  this.options.runValidators = true
+  next()
+})
+
+PatternSchema.methods.getPublic = function () {
+  return this.select(filters.public)
+}
+
+PatternSchema.methods.getPrivate = function () {
+  return this.select(filters.private)
+}
 const Pattern = mongoose.model('Pattern', PatternSchema)
 export default Pattern
