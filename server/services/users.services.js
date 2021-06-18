@@ -1,6 +1,7 @@
 import User from '../models/Users.js'
 import Pattern from '../models/Pattern.js'
 import { NotFoundError } from '../helpers/errors.js'
+import * as patternServices from './patterns.services.js'
 
 const filters = {
   public: null,
@@ -16,7 +17,7 @@ export async function getUserById (id, filterType = 'public') {
 export async function getPatternsByUserId (id) {
   const user = await User.findById(id)
   if (!user) { throw new NotFoundError('user not found') }
-  const patterns = await Pattern.find({ creator: id })
+  const patterns = await Pattern.find({ creator: id }, patternServices.filters.public)
   return patterns
 }
 

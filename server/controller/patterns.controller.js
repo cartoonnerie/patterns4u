@@ -5,7 +5,7 @@ const DEBUG = debug('dev')
 // import extraction from './extractionOfInformation/extractionData.js'
 
 export async function getAllPatterns (req, res) {
-  const patterns = await Pattern.find({})
+  const patterns = await Pattern.find({}, services.filters.public)
   res.status(200).send(patterns)
 }
 
@@ -20,16 +20,16 @@ export async function getBoughtPatterns (req, res) {
 
 }
 
-export async function getPatternById (req, res) {
-  const pattern = await Pattern.findById(req.params.id)
+export function getPatternById (req, res) {
+  async function findAndSend (id, filterType) {
+    const pattern = await Pattern.findById(id, services.filters[filterType])
+    res.status(200).send(pattern)
+  }
+  const { id } = req.params
   services.checkBought(
     req.params.id, req.auth.id,
-    () => {
-      res.status(200).send(pattern.getPrivate())
-    },
-    () => {
-      res.status(200).send(pattern.getPublic())
-    })
+    () => { findAndSend(id, 'private') },
+    () => { findAndSend(id, 'public') })
 }
 
 export async function deletePatterns (req, res) {
@@ -51,7 +51,7 @@ export async function updatePattern (req, res) {
 export async function getPatternPDF (req, res) {
   // TODO handle errors more precisely
   // eslint-disable-next-line no-unused-vars
-  const pattern = await services.getPatternById(req.params.id)
+  const pattern = await services.getPatternById(req.params.id, services.filters.private)
 
   services.checkBought(
     req.params.id, req.auth.id,

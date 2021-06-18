@@ -5,11 +5,6 @@ const Schema = mongoose.Schema
 
 const availabilities = ['draft', 'online', 'free']
 
-const filters = {
-  public: { versionKey: false },
-  private: { explanation: false, versionKey: false }
-}
-
 const PatternSchema = new Schema({
   ravelry_id: String,
   name: { type: String, required: true },
@@ -68,12 +63,5 @@ PatternSchema.pre('findByIdAndUpdate', function (next) {
   next()
 })
 
-PatternSchema.methods.getPublic = function () {
-  return this.select(filters.public)
-}
-
-PatternSchema.methods.getPrivate = function () {
-  return this.select(filters.private)
-}
 const Pattern = mongoose.model('Pattern', PatternSchema)
 export default Pattern
