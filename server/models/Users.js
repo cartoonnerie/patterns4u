@@ -14,8 +14,11 @@ const UserSchema = new Schema({
     type: String,
     unique: true,
     minLength: 1
+  },
+  boughtPatterns: {
+    type: [Schema.Types.ObjectId],
+    default: []
   }
-  // email: String
 })
 
 UserSchema.methods.generateJWT = function () {

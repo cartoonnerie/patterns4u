@@ -7,7 +7,7 @@ const router = Router()
 router.get('/', auth.optional, controller.getAllPatterns)
 router.post('/', auth.required, controller.createPattern)
 
-router.get('/', auth.required /* TODO conceive controller for that */)
+router.get('/bought', auth.required, controller.getBoughtPatterns)
 
 router.get('/:id', auth.optional, controller.getPatternById)
 router.delete('/:id', auth.required, controller.deletePatterns)

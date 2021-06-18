@@ -16,10 +16,6 @@ export async function createPattern (req, res) {
   res.status(201).send(newPattern)
 }
 
-export async function getBoughtPatterns (req, res) {
-
-}
-
 export function getPatternById (req, res) {
   async function findAndSend (id, filterType) {
     const pattern = await Pattern.findById(id, services.filters[filterType])
@@ -46,6 +42,13 @@ export async function updatePattern (req, res) {
     res.status(200).send(pattern)
   }
   return await services.checkOwnerAndAct(req.params.id, req.auth.id, onSuccess)
+}
+
+export async function getBoughtPatterns (req, res) {
+  const { userId } = req.auth
+  if (!userId) { res.sendStatus(400) }
+  const patterns = await services.getBoughtPatterns(userId)
+  res.status(200).send(patterns)
 }
 
 export async function getPatternPDF (req, res) {

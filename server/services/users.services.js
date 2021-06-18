@@ -21,7 +21,13 @@ export async function getPatternsByUserId (id) {
   return patterns
 }
 
-export function boughtThatPattern (userId, patternId) {
-  // TODO
-  return false
+export async function boughtThatPattern (userId, patternId) {
+  const user = await User.findById(userId)
+  if (!user) { throw new NotFoundError('user not found') }
+  user.populate({
+    path: 'boughtPatterns',
+    select: '_id',
+    match: { _id: patternId }
+  })
+  return !!user.patterns
 }
